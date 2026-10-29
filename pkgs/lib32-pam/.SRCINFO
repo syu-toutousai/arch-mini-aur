@@ -1,0 +1,19 @@
+pkgbase = lib32-pam
+	pkgdesc = Pluggable Authentication Modules
+	pkgver = 1.7.2
+	pkgrel = 2
+	url = http://linux-pam.org
+	arch = x86_64
+	license = GPL2
+	makedepends = meson
+	depends = lib32-audit
+	depends = lib32-libnsl
+	depends = lib32-libtirpc
+	depends = lib32-libxcrypt
+	depends = lib32-systemd
+	depends = pam
+	options = !emptydirs
+	source = linux-pam-1.7.2.tar.gz::https://codeload.github.com/linux-pam/linux-pam/tar.gz/refs/tags/v1.7.2
+	sha256sums = d7ce5cb6e07ee8603d8af41a672bcb515b9d27079ee309fb3f729a8020166694
+
+pkgname = lib32-pam

@@ -14,6 +14,7 @@ ORDER=(
   lib32-libshout
   lib32-popt
   lib32-libdv
+  lib32-pam
   lib32-polkit
   lib32-pcsclite
   lib32-taglib
