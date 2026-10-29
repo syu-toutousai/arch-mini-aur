@@ -1,0 +1,14 @@
+pkgbase = metals
+	pkgdesc = Language Server For Scala (local repack)
+	pkgver = 1.5.2
+	pkgrel = 2
+	url = https://scalameta.org/metals/
+	install = metals.install
+	arch = any
+	license = Apache-2.0
+	depends = java-environment>=8
+	depends = findutils
+	depends = python
+	optdepends = bloop
+
+pkgname = metals

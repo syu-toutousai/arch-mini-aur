@@ -1,0 +1,23 @@
+# Maintainer: syu-toutousai <167145022+syu-toutousai@users.noreply.github.com>
+# ローカルにインストール済みの metals 1.5.2-1.1（Garuda ビルド）を
+# 1.5.2-2 として再梱包する local-only パッケージ。
+# AUR: https://aur.archlinux.org/packages/metals (1.5.2-1, Apache-2.0)
+
+pkgname=metals
+pkgver=1.5.2
+pkgrel=2
+pkgdesc='Language Server For Scala (local repack)'
+arch=('any')
+url='https://scalameta.org/metals/'
+license=('Apache-2.0')
+depends=('java-environment>=8' 'findutils' 'python')
+optdepends=('bloop')
+install=metals.install
+source=()
+sha256sums=()
+
+package() {
+  install -d "$pkgdir/usr/bin" "$pkgdir/usr/share/java"
+  cp -a /usr/bin/metals* "$pkgdir/usr/bin/"
+  cp -a /usr/share/java/metals "$pkgdir/usr/share/java/"
+}

@@ -1,0 +1,12 @@
+pkgbase = open-jtalk-voice-mei
+	pkgdesc = HTS voice for Open JTalk (local-only)
+	pkgver = 1.7
+	pkgrel = 2
+	url = http://www.mmdagent.jp/
+	arch = any
+	license = CCPL
+	provides = open-jtalk-voice
+	source = https://downloads.sourceforge.net/project/mmdagent/MMDAgent_Example/MMDAgent_Example-1.7/MMDAgent_Example-1.7.zip
+	sha256sums = 5b560e8c23c5acaf67688e6e25788db2c0bb230aff0635b7c75a82a87c7f6dba
+
+pkgname = open-jtalk-voice-mei
