@@ -1,0 +1,15 @@
+pkgbase = lib32-audit
+	pkgdesc = Userspace components of the audit framework
+	pkgver = 4.2.1
+	pkgrel = 2
+	url = https://github.com/linux-audit/audit-userspace
+	arch = x86_64
+	license = GPL-2.0-or-later
+	license = LGPL-2.0-or-later
+	depends = audit=4.2.1
+	depends = lib32-glibc
+	provides = libaudit.so
+	source = audit-userspace-4.2.1.tar.gz::https://codeload.github.com/linux-audit/audit-userspace/tar.gz/refs/tags/v4.2.1
+	sha256sums = 42876d195ee2ded19e5f72d7664096eee314928aa36ad346719ba5b25818fc84
+
+pkgname = lib32-audit
