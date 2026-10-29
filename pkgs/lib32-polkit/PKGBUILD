@@ -1,0 +1,68 @@
+# Maintainer: Maxime Gauduin <alucryd@archlinux.org>
+# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+# Contributor: Jan de Groot <jgc@archlinux.org>
+# Contributor: jtts <jussaar@mbnet.fi>
+# Contributor: GordonGR <gordongr@freemail.gr>
+
+pkgname=lib32-polkit
+pkgver=127
+pkgrel=2
+pkgdesc="Application development toolkit for controlling system-wide privileges"
+url="https://github.com/polkit-org/polkit"
+arch=(x86_64)
+license=(LGPL-2.0-or-later)
+depends=(
+  lib32-glib2
+  lib32-glibc
+  lib32-systemd
+  polkit
+)
+makedepends=(
+  dbus
+  git
+  glib2-devel
+  lib32-pam
+  meson
+  systemd
+)
+checkdepends=(python-dbusmock)
+provides=(libpolkit-{agent,gobject}-1.so)
+source=(
+  "polkit-$pkgver.tar.gz::https://codeload.github.com/polkit-org/polkit/tar.gz/refs/tags/$pkgver"
+  0001-meson-Support-explicit-GID.patch
+  0002-meson-Detect-Arch-Linux-and-set-the-UID-and-GID.patch
+)
+sha256sums=('9b7bc16f086479dcc626c575976568ba4a85d34297a750d8ab3d2e57f6d8b988'
+            '33af8f73316f5d3f482096e51e9556cefd72df2e6d19e871a1b8cb2d0306dc80'
+            '3d40be544b6b9fb439e7218909dd7e9ed582e7e689e8636bdabdbf9abb264244')
+
+prepare() {
+  cd polkit-$pkgver
+  patch -Np1 -i ../0001-meson-Support-explicit-GID.patch
+  patch -Np1 -i ../0002-meson-Detect-Arch-Linux-and-set-the-UID-and-GID.patch
+}
+
+build() {
+  local meson_options=(
+    --cross-file lib32
+    -D gettext=true
+    -D introspection=false
+    -D libs-only=true
+    -D tests=true
+  )
+
+  arch-meson polkit-$pkgver build "${meson_options[@]}"
+  meson compile -C build
+}
+
+check() {
+  meson test -C build --print-errorlogs -t 3
+}
+
+package() {
+  meson install -C build --destdir "$pkgdir"
+
+  rm -r "$pkgdir"/usr/{include,lib,share}
+}
+
+# vim:set sw=2 sts=-1 et:

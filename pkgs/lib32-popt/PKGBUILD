@@ -1,0 +1,39 @@
+# Maintainer: Felix Yan <felixonmars@archlinux.org>
+# Contributor: Michael Lass <bevan@bi-co.net>
+# Contributor: jospehgbr <rafael.f.f1@gmail.com>
+# Contributor: coderoar <coderoar@gmail.com>
+# Contributor: webjdm <web.jdm@gmail.com>
+
+_pkgbase=popt
+pkgname=lib32-${_pkgbase}
+pkgver=1.19
+pkgrel=3
+pkgdesc="Commandline option parser (32 bit)"
+arch=('x86_64')
+url="http://rpm5.org"
+license=('custom')
+depends=('lib32-glibc' "${_pkgbase}")
+source=("https://codeload.github.com/rpm-software-management/popt/tar.gz/refs/tags/popt-$pkgver-release")
+sha256sums=('6eb40d650526cb9fe63eb4415bcecdf9cf306f7556e77eff689abc5a44670060')
+
+prepare() {
+  cd popt-popt-$pkgver-release
+  ./autogen.sh
+}
+
+build() {
+  export CC="gcc -m32"
+
+  cd popt-popt-$pkgver-release
+  ./configure --prefix=/usr --libdir=/usr/lib32 --disable-nls
+  make
+}
+
+package() {
+  cd popt-popt-$pkgver-release
+  make DESTDIR="${pkgdir}" pkgconfigdir='/usr/lib32/pkgconfig' install
+
+  rm -rf "${pkgdir}"/usr/{include,share}
+  install -dm755 "${pkgdir}"/usr/share/licenses
+  ln -s ${_pkgbase} "${pkgdir}"/usr/share/licenses/${pkgname}
+}

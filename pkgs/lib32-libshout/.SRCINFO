@@ -1,0 +1,22 @@
+pkgbase = lib32-libshout
+	pkgdesc = Library for accessing a shoutcast/icecast server (32 bit)
+	pkgver = 2.4.6
+	pkgrel = 5
+	epoch = 1
+	url = https://www.icecast.org/
+	arch = x86_64
+	license = LGPL
+	depends = lib32-libvorbis
+	depends = lib32-libtheora
+	depends = lib32-speex
+	depends = lib32-openssl
+	depends = libshout
+	options = !emptydirs
+	source = icecast-libshout-2.4.6.tar.gz::https://gitlab.xiph.org/xiph/icecast-libshout/-/archive/v2.4.6/icecast-libshout-v2.4.6.tar.gz
+	source = icecast-m4-57027c6cc3f8b26d59e9560b4ac72a1a06d643b9.tar.gz::https://gitlab.xiph.org/xiph/icecast-m4/-/archive/57027c6cc3f8b26d59e9560b4ac72a1a06d643b9/icecast-m4-57027c6cc3f8b26d59e9560b4ac72a1a06d643b9.tar.gz
+	source = icecast-common-5de3e8b3b063002d8a9f52122e97f721e1742531.tar.gz::https://gitlab.xiph.org/xiph/icecast-common/-/archive/5de3e8b3b063002d8a9f52122e97f721e1742531/icecast-common-5de3e8b3b063002d8a9f52122e97f721e1742531.tar.gz
+	sha256sums = 92e81faaf4f5bf0a4feb5e3d29f9e79f5eeb392bc633ffed869a905b86c4dcb5
+	sha256sums = a838f9c0a9380b76e9b5e295de30699d934d8094f528ba00c708939275e34e09
+	sha256sums = f575cd77fb879b4a97a83f6ab75408ee80d8fa2683173e9ade6de52f0c92bcdb
+
+pkgname = lib32-libshout

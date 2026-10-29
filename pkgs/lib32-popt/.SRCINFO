@@ -1,0 +1,13 @@
+pkgbase = lib32-popt
+	pkgdesc = Commandline option parser (32 bit)
+	pkgver = 1.19
+	pkgrel = 3
+	url = http://rpm5.org
+	arch = x86_64
+	license = custom
+	depends = lib32-glibc
+	depends = popt
+	source = https://codeload.github.com/rpm-software-management/popt/tar.gz/refs/tags/popt-1.19-release
+	sha256sums = 6eb40d650526cb9fe63eb4415bcecdf9cf306f7556e77eff689abc5a44670060
+
+pkgname = lib32-popt

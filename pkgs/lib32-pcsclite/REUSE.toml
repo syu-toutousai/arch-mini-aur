@@ -1,0 +1,31 @@
+version = 1
+
+[[annotations]]
+path = [
+    "PKGBUILD",
+    "README.md",
+    "keys/**",
+    ".SRCINFO",
+    ".nvchecker.toml",
+    "*.install",
+    "*.sysusers",
+    "*.tmpfiles",
+    "*.logrotate",
+    "*.pam",
+    "*.service",
+    "*.socket",
+    "*.timer",
+    "*.desktop",
+    "*.hook",
+]
+SPDX-FileCopyrightText = "Arch Linux contributors"
+SPDX-License-Identifier = "0BSD"
+
+[[annotations]]
+path = [
+    "program-suffix.patch",
+    "systemd-unit-conflicts.diff",
+    "0001-Allow-to-run-32-bit-pcscd-on-64-bit-systems.patch"
+]
+SPDX-FileCopyrightText = "lib32-pcsclite contributors"
+SPDX-License-Identifier = "BSD-3-Clause"

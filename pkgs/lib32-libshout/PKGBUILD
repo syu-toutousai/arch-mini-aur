@@ -1,0 +1,53 @@
+# Maintainer: Felix Yan <felixonmars@archlinux.org>
+# Contributor: GordonGR <gordongr@freemail.gr>
+# Contributor: Giovanni Scafora <giovanni@archlinux.org>
+# Contributor: arjan <arjan@archlinux.org>
+# Contributor: Jason Chu <jchu@xentac.net>
+
+pkgname=lib32-libshout
+_pkgname=libshout
+pkgver=2.4.6
+pkgrel=5
+epoch=1
+pkgdesc="Library for accessing a shoutcast/icecast server (32 bit)"
+arch=('x86_64')
+depends=('lib32-libvorbis' 'lib32-libtheora' 'lib32-speex' 'lib32-openssl' 'libshout')
+url="https://www.icecast.org/"
+options=('!emptydirs')
+license=('LGPL')
+_m4commit=57027c6cc3f8b26d59e9560b4ac72a1a06d643b9
+_commoncommit=5de3e8b3b063002d8a9f52122e97f721e1742531
+source=(
+  "icecast-libshout-$pkgver.tar.gz::https://gitlab.xiph.org/xiph/icecast-libshout/-/archive/v$pkgver/icecast-libshout-v$pkgver.tar.gz"
+  "icecast-m4-$_m4commit.tar.gz::https://gitlab.xiph.org/xiph/icecast-m4/-/archive/$_m4commit/icecast-m4-$_m4commit.tar.gz"
+  "icecast-common-$_commoncommit.tar.gz::https://gitlab.xiph.org/xiph/icecast-common/-/archive/$_commoncommit/icecast-common-$_commoncommit.tar.gz"
+)
+sha256sums=(
+  '92e81faaf4f5bf0a4feb5e3d29f9e79f5eeb392bc633ffed869a905b86c4dcb5'
+  'a838f9c0a9380b76e9b5e295de30699d934d8094f528ba00c708939275e34e09'
+  'f575cd77fb879b4a97a83f6ab75408ee80d8fa2683173e9ade6de52f0c92bcdb'
+)
+
+prepare() {
+  cd icecast-libshout-v$pkgver
+  mkdir -p m4 src/common
+  cp -a "../icecast-m4-$_m4commit/." m4/
+  cp -a "../icecast-common-$_commoncommit/." src/common/
+  ./autogen.sh
+}
+
+build() {
+  export CC="gcc -m32"
+  export CXX="g++ -m32"
+  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
+
+  cd icecast-libshout-v$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libdir=/usr/lib32
+  make
+}
+
+package() {
+  cd icecast-libshout-v$pkgver
+  make DESTDIR="${pkgdir}" install
+  rm -r "$pkgdir"/usr/{bin,include,share}
+}

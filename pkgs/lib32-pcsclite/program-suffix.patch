@@ -1,0 +1,92 @@
+From 848984302f3651aa06fe0e3f2e38f2f42eb26f06 Mon Sep 17 00:00:00 2001
+From: Frederik Schwan <frederik@tty42.de>
+Date: Wed, 2 Apr 2025 22:27:15 +0200
+Subject: [PATCH] add compatibility changes to allow both 64 bit and 32 bit
+ versions of the package to be installed at the same time
+
+it might be better to use different runtime directories for different
+versions, such as /run/pcscd and /run/pcscd-32, while it's non-trivial,
+as the default value of ipcdir should be adjusted.
+---
+ etc/pcscd.service.in | 8 ++++----
+ meson.build          | 7 ++++---
+ meson.options        | 5 +++++
+ 3 files changed, 13 insertions(+), 7 deletions(-)
+
+diff --git a/etc/pcscd.service.in b/etc/pcscd.service.in
+index 874a03dc..e4f82ad7 100644
+--- a/etc/pcscd.service.in
++++ b/etc/pcscd.service.in
+@@ -1,12 +1,12 @@
+ [Unit]
+ Description=PC/SC Smart Card Daemon
+-Requires=pcscd.socket
++Requires=pcscd@program_suffix@.socket
+ @requires_polkit@
+ Documentation=man:pcscd(8)
+ 
+ [Service]
+-ExecStart=@sbindir_exp@/pcscd --foreground --auto-exit $PCSCD_ARGS
+-ExecReload=@sbindir_exp@/pcscd --hotplug
++ExecStart=@sbindir_exp@/pcscd@program_suffix@ --foreground --auto-exit $PCSCD_ARGS
++ExecReload=@sbindir_exp@/pcscd@program_suffix@ --hotplug
+ EnvironmentFile=-@sysconfdir@/default/pcscd
+ User=pcscd
+ RuntimeDirectory=pcscd
+@@ -48,4 +48,4 @@ SystemCallFilter=~@resources @privileged
+ SystemCallArchitectures=native
+ 
+ [Install]
+-Also=pcscd.socket
++Also=pcscd@program_suffix@.socket
+diff --git a/meson.build b/meson.build
+index 34870db2..62a11f98 100644
+--- a/meson.build
++++ b/meson.build
+@@ -29,6 +29,7 @@ confgen_data = configuration_data({
+   'sbindir_exp' : sbindir,
+   'PCSCLITE_CONFIG_DIR' : get_option('serialconfdir'),
+   'usbdropdir' : get_option('usbdropdir'),
++  'program_suffix' : get_option('program_suffix'),
+   })
+ 
+ # tests for functions
+@@ -161,7 +162,7 @@ features += 'serialconfdir=' + get_option('serialconfdir')
+ # generate PCSCLITE_FEATURES
+ conf_data.set('PCSCLITE_FEATURES', '"' + ' '.join(features) + '"')
+ 
+-executable('pcscd',
++executable('pcscd@0@'.format(get_option('program_suffix')),
+   sources : pcscd_src,
+   include_directories : incdir,
+   dependencies : pcscd_dep,
+@@ -299,11 +300,11 @@ configure_file(output : 'pcsclite.h',
+ configure_file(output : 'pcscd.h',
+   input : 'src/pcscd.h.in',
+   configuration : confgen_data)
+-configure_file(output : 'pcscd.socket',
++configure_file(output : 'pcscd@0@.socket'.format(get_option('program_suffix')),
+   input : 'etc/pcscd.socket.in',
+   install_dir : systemdsystemunitdir,
+   configuration : confgen_data)
+-configure_file(output : 'pcscd.service',
++configure_file(output : 'pcscd@0@.service'.format(get_option('program_suffix')),
+   input : 'etc/pcscd.service.in',
+   install_dir : systemdsystemunitdir,
+   configuration : confgen_data)
+diff --git a/meson.options b/meson.options
+index f0b58cac..9e62bcc1 100644
+--- a/meson.options
++++ b/meson.options
+@@ -53,3 +53,8 @@ option('filter_names',
+   type : 'boolean',
+   value : true,
+   description : 'reader filtering using PCSCLITE_FILTER_IGNORE_READER_NAMES and PCSCLITE_FILTER_EXTEND_READER_NAMES')
++
++option('program_suffix',
++  type : 'string',
++  value : '',
++  description : 'suffix for programs')
+-- 
+2.52.0
+

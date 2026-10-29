@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Prepare Arch container
         run: |
+          sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' /etc/pacman.conf
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm --needed asar nodejs npm gnupg sudo
@@ -34,7 +35,7 @@ jobs:
       - name: Build staging repository
         run: |
           mkdir -p repo
-          cp pkgs/*/*.pkg.tar.zst repo/
+          find pkgs -mindepth 2 -maxdepth 2 -name '*.pkg.tar.zst' ! -name '*-debug-*' -exec cp -t repo {} +
           repo-add repo/syu-mini-aur.db.tar.gz repo/*.pkg.tar.zst
           cp --remove-destination repo/syu-mini-aur.db.tar.gz repo/syu-mini-aur.db
           cp --remove-destination repo/syu-mini-aur.files.tar.gz repo/syu-mini-aur.files
