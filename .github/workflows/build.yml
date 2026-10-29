@@ -16,7 +16,9 @@ jobs:
     steps:
       - name: Prepare Arch container
         run: |
-          sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' /etc/pacman.conf
+          if ! grep -q '^\[multilib\]' /etc/pacman.conf; then
+            printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf
+          fi
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm --needed asar nodejs npm gnupg sudo
@@ -36,6 +38,12 @@ jobs:
         run: |
           mkdir -p repo
           find pkgs -mindepth 2 -maxdepth 2 -name '*.pkg.tar.zst' ! -name '*-debug-*' -exec cp -t repo {} +
+          for f in repo/lib32-libshout-1:*.pkg.tar.zst; do
+            [ -e "$f" ] || continue
+            base="$(basename "$f")"
+            new="$(printf '%s\n' "$base" | sed 's/^lib32-libshout-1:/lib32-libshout-/')"
+            mv "$f" "repo/$new"
+          done
           repo-add repo/syu-mini-aur.db.tar.gz repo/*.pkg.tar.zst
           cp --remove-destination repo/syu-mini-aur.db.tar.gz repo/syu-mini-aur.db
           cp --remove-destination repo/syu-mini-aur.files.tar.gz repo/syu-mini-aur.files
