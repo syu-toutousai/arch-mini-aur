@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 KEY_FILE="$ROOT/keys/syu-mini-aur.asc"
 REPO_NAME="syu-mini-aur"
 SERVER="https://github.com/syu-toutousai/arch-mini-aur/releases/latest/download"
+LOCAL_REPO="$ROOT/local-repo"
 CONF="/etc/pacman.conf"
 
 if [ "$(id -u)" -ne 0 ]; then
@@ -21,12 +22,17 @@ cp -a "$CONF" "$BACKUP"
 echo "backup: $BACKUP"
 
 if ! grep -q "^\[$REPO_NAME\]" "$CONF"; then
-  cat >> "$CONF" <<EOF
-
-[$REPO_NAME]
-SigLevel = Required DatabaseOptional
-Server = $SERVER
-EOF
+  {
+    echo
+    echo "[$REPO_NAME]"
+    echo "SigLevel = Required DatabaseOptional"
+    if [ -d "$LOCAL_REPO" ]; then
+      echo "Server = file://$LOCAL_REPO"
+      echo "Server = $SERVER"
+    else
+      echo "Server = $SERVER"
+    fi
+  } >> "$CONF"
   echo "追加: [$REPO_NAME] -> $CONF"
 else
   echo "既に存在: [$REPO_NAME]"

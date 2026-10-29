@@ -87,6 +87,12 @@ for pkg in "${PKGS[@]}"; do
   gpg --verify "$pkg.sig" "$pkg"
 done
 
+LOCAL_REPO_DIR="${LOCAL_REPO_DIR:-$ROOT/local-repo}"
+echo "==> ローカルミラーを作成: $LOCAL_REPO_DIR"
+rm -rf "$LOCAL_REPO_DIR"
+mkdir -p "$LOCAL_REPO_DIR"
+cp -a ./* "$LOCAL_REPO_DIR"/
+
 mkdir -p "$ROOT/keys"
 gpg --armor --export "$KEY" > "$ROOT/keys/syu-mini-aur.asc"
 FPR="$(gpg --list-keys --with-colons "$KEY" | awk -F: '$1=="fpr"{print $10; exit}')"

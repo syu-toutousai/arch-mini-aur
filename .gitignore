@@ -1,6 +1,7 @@
 **/src/
 **/pkg/
 repo/
+local-repo/
 *.pkg.tar.zst
 *.pkg.tar.zst.sig
 *.pkg.tar.xz
