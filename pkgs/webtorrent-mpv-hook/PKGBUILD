@@ -1,0 +1,59 @@
+# Maintainer: syu-toutousai <167145022+syu-toutousai@users.noreply.github.com>
+# 上流: https://github.com/mrxdst/webtorrent-mpv-hook (Unlicense)
+# AUR の webtorrent-mpv-hook は孤児化しているため、上流タグから自前ビルドする。
+
+pkgname=webtorrent-mpv-hook
+pkgver=1.4.6
+pkgrel=2
+pkgdesc="mpv でトレントをストリーミングするスクリプト"
+arch=('x86_64' 'aarch64')
+url="https://github.com/mrxdst/webtorrent-mpv-hook"
+license=('Unlicense')
+depends=('nodejs' 'mpv')
+makedepends=('npm')
+options=('!strip')
+source=("https://github.com/mrxdst/webtorrent-mpv-hook/archive/refs/tags/v${pkgver}.tar.gz")
+sha256sums=('a57bd1fa2758d728490ddf2bae6e0ee4029048ea2a1a72f76d327f554fa77328')
+
+prepare() {
+  cd "$srcdir/${pkgname}-${pkgver}"
+  # 上流の package-lock.json で依存を固定する。
+  npm ci --cache "$srcdir/npm-cache" --no-audit --no-fund
+}
+
+build() {
+  cd "$srcdir/${pkgname}-${pkgver}"
+  npm run build
+  npm prune --omit=dev --cache "$srcdir/npm-cache" --no-audit --no-fund
+}
+
+check() {
+  cd "$srcdir/${pkgname}-${pkgver}"
+  test -f build/webtorrent.js
+  test -f build/webtorrent.node.js
+  test -f build/bin.mjs
+  node -e "const p=require('./package.json'); if(p.version!=='${pkgver}') process.exit(1)"
+  node -e "const l=require('./package-lock.json'); if(l.packages[''].version!=='${pkgver}') process.exit(1)"
+  test -d node_modules/webtorrent
+}
+
+package() {
+  cd "$srcdir/${pkgname}-${pkgver}"
+
+  local dest="$pkgdir/usr/lib/node_modules/$pkgname"
+  install -d "$dest"
+  cp -a build package.json LICENSE README.md "$dest/"
+  cp -a node_modules "$dest/"
+  chmod 755 "$dest/build/bin.mjs"
+
+  install -d "$pkgdir/usr/bin"
+  install -d "$pkgdir/etc/mpv/scripts"
+  install -d "$pkgdir/usr/share/licenses/$pkgname"
+
+  ln -s "../lib/node_modules/$pkgname/build/bin.mjs" \
+    "$pkgdir/usr/bin/$pkgname"
+  ln -s "../../../usr/lib/node_modules/$pkgname/build/webtorrent.js" \
+    "$pkgdir/etc/mpv/scripts/webtorrent.js"
+  ln -s "../../../usr/lib/node_modules/$pkgname/LICENSE" \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

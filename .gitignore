@@ -1,0 +1,11 @@
+**/src/
+**/pkg/
+repo/
+*.pkg.tar.zst
+*.pkg.tar.zst.sig
+*.pkg.tar.xz
+*.deb
+syu-mini-aur.db*
+syu-mini-aur.files*
+*.log
+node_modules/

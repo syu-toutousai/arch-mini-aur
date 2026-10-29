@@ -1,0 +1,16 @@
+pkgbase = webtorrent-mpv-hook
+	pkgdesc = mpv でトレントをストリーミングするスクリプト
+	pkgver = 1.4.6
+	pkgrel = 2
+	url = https://github.com/mrxdst/webtorrent-mpv-hook
+	arch = x86_64
+	arch = aarch64
+	license = Unlicense
+	makedepends = npm
+	depends = nodejs
+	depends = mpv
+	options = !strip
+	source = https://github.com/mrxdst/webtorrent-mpv-hook/archive/refs/tags/v1.4.6.tar.gz
+	sha256sums = a57bd1fa2758d728490ddf2bae6e0ee4029048ea2a1a72f76d327f554fa77328
+
+pkgname = webtorrent-mpv-hook

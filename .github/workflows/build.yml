@@ -1,0 +1,49 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+    steps:
+      - name: Prepare Arch container
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm --needed asar nodejs npm gnupg sudo
+          useradd -m builder
+          echo 'builder ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/builder
+          chmod 440 /etc/sudoers.d/builder
+
+      - uses: actions/checkout@v4
+
+      - name: Build all packages
+        run: |
+          WORKDIR="$GITHUB_WORKSPACE"
+          chown -R builder:builder "$WORKDIR"
+          su builder -c "cd '$WORKDIR' && bash tools/ci-build.sh"
+
+      - name: Build staging repository
+        run: |
+          mkdir -p repo
+          cp pkgs/*/*.pkg.tar.zst repo/
+          repo-add repo/syu-mini-aur.db.tar.gz repo/*.pkg.tar.zst
+          cp --remove-destination repo/syu-mini-aur.db.tar.gz repo/syu-mini-aur.db
+          cp --remove-destination repo/syu-mini-aur.files.tar.gz repo/syu-mini-aur.files
+          sha256sum repo/*.pkg.tar.zst > repo/SHA256SUMS
+          ls -lh repo
+
+      - name: Upload staging repository
+        uses: actions/upload-artifact@v4
+        with:
+          name: mini-aur
+          path: repo/
+          if-no-files-found: error
