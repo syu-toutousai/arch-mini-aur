@@ -10,9 +10,15 @@ if gpg --list-keys "$KEY_UID" >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "GPG 署名鍵を生成します。パスフレーズを設定してください。"
+GPG_OPTS=()
+if [ -n "${KEY_PASSPHRASE_FILE:-}" ]; then
+  echo "GPG 署名鍵を生成します（パスフレーズファイル: $KEY_PASSPHRASE_FILE）。"
+  GPG_OPTS=(--batch --pinentry-mode loopback --passphrase-file "$KEY_PASSPHRASE_FILE")
+else
+  echo "GPG 署名鍵を生成します。パスフレーズを設定してください。"
+fi
 echo "UID: $KEY_UID"
-gpg --quick-generate-key "$KEY_UID" ed25519 sign 2y
+gpg "${GPG_OPTS[@]}" --quick-generate-key "$KEY_UID" ed25519 sign 2y
 
 FPR="$(gpg --list-keys --with-colons "$KEY_UID" | awk -F: '$1=="fpr"{print $10; exit}')"
 if [ -z "$FPR" ]; then

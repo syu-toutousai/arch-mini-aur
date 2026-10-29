@@ -55,6 +55,21 @@ if [ "${#PKGS[@]}" -eq 0 ]; then
   exit 1
 fi
 
+if [ -n "${KEY_PASSPHRASE_FILE:-}" ]; then
+  KEYGRIP="$(gpg --with-keygrip --list-secret-keys "$KEY" \
+    | awk '/Keygrip/{print $NF; exit}')"
+  if [ -z "$KEYGRIP" ]; then
+    echo "keygrip を取得できません: $KEY" >&2
+    exit 1
+  fi
+  if [ ! -x /usr/lib/gnupg/gpg-preset-passphrase ]; then
+    echo "gpg-preset-passphrase が見つかりません" >&2
+    exit 1
+  fi
+  /usr/lib/gnupg/gpg-preset-passphrase --preset "$KEYGRIP" < "$KEY_PASSPHRASE_FILE"
+  echo "==> パスフレーズを gpg-agent に preset"
+fi
+
 echo "==> パッケージ署名: ${#PKGS[@]} 個"
 for pkg in "${PKGS[@]}"; do
   gpg --batch --yes --local-user "$KEY" --detach-sign "$pkg"
